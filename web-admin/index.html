@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web Admin Panel</title>
+    <style>
+      body {
+        display: flex;
+        flex-direction: row;
+      }
+
+      header {
+        margin: 1em;
+      }
+    </style>
+    <div id="alertContainer"></div>
+    <style>
+      .alert {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 1;
+        padding: 1vh 2vh;
+        margin-bottom: 1rem;
+        border: 2px solid transparent;
+        text-transform: capitalize;
+        border-radius: 5px;
+        transition: 0.3s ease-in-out;
+      }
+
+      #graphSelect {
+        padding: 1vh;
+        border: 1px solid lightgrey;
+        border-radius: 1vh;
+        text-transform: uppercase;
+      }
+
+      .alert.success {
+        color: #fff;
+        background-color: green;
+        border-color: #fff;
+      }
+      .alert.danger {
+        color: #fff;
+        background-color: maroon;
+        border-color: #fff;
+      }
+    </style>
+    <script>
+      function showAlert(message, type) {
+        const alertContainer = document.getElementById("alertContainer");
+
+        const alert = document.createElement("div");
+        alert.className = `alert ${type}`;
+        alert.innerHTML = `${message}<span class="close" onclick="closeAlert(this)"> &#9587;</span>`;
+
+        alertContainer.appendChild(alert);
+
+        setTimeout(() => {
+          closeAlert(alert.querySelector(".close"));
+        }, 4000);
+      }
+
+      function closeAlert(closeButton) {
+        const alert = closeButton.parentElement;
+        alert.style.display = "none";
+      }
+    </script>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul>
+          <li class="logo">
+            <img src="/assets/ww side name logo.png" alt="" />
+            <span class="nav-item admin">Admin Dashboard</span>
+          </li>
+          <li>
+            <a href="#" onclick="selectSection('collections')" id="usersTab">
+              <i class="fas fa-user"></i>
+              <span class="nav-item">collections</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" onclick="selectSection('products')" id="usersTab">
+              <i class="fas fa-user"></i>
+              <span class="nav-item">products</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <div id="collections">
+        <div>this is collections Tab</div>
+      </div>
+      <div id="products" style="display: none">
+        <div>this is products tab</div>
+      </div>
+    </main>
+    <script>
+      let selectedSection = "collections";
+
+      function selectSection(sectionName) {
+        document.getElementById(selectedSection).style.display = "none";
+        document.getElementById(sectionName).style.display = "block";
+        selectedSection = sectionName;
+      }
+    </script>
+  </body>
+</html>

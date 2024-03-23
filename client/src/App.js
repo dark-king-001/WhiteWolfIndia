@@ -5,6 +5,7 @@ import Loading from "./pages/Loading/Loading";
 
 import Home from "./pages/Home/Home";
 import About from "./pages/About/About";
+
 function App() {
   return (
     <BrowserRouter>

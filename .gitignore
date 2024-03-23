@@ -1,0 +1,6 @@
+.env
+accessData.csv.log
+adminConfig.js
+
+client/build
+client/node_modules

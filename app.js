@@ -67,6 +67,10 @@ app.use(express.static(path.join(__dirname, "./client/build")));
 // const admin = require("./routes/admin_routes");
 // app.use(admin);
 
+app.get("/web-admin", (req, res) => {
+  res.sendFile(__dirname + "/web-admin/index.html");
+});
+
 app.get("*", (req, res) => {
   try {
     const allowedUrls = {
