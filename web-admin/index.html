@@ -78,6 +78,12 @@
             <span class="nav-item admin">Admin Dashboard</span>
           </li>
           <li>
+            <a href="#" onclick="selectSection('users')" id="usersTab">
+              <i class="fas fa-user"></i>
+              <span class="nav-item">users</span>
+            </a>
+          </li>
+          <li>
             <a
               href="#"
               onclick="selectSection('collections')"
@@ -109,6 +115,96 @@
       </nav>
     </header>
     <main>
+      <div id="users">
+        <div>
+          <h1>
+            User Analytics
+            <button class="export-btn">
+              Export CSV
+              <iconify-icon icon="ic:baseline-file-download"></iconify-icon>
+            </button>
+          </h1>
+          <div class="user-container">
+            <table class="user-table">
+              <thead>
+                <tr>
+                  <th>User Name</th>
+                  <th>Email</th>
+                  <th>Phone Number</th>
+                  <th>Pin Code</th>
+                  <th>Account Created</th>
+                </tr>
+              </thead>
+              <tbody id="userTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <script>
+          document
+            .querySelector(".export-btn")
+            .addEventListener("click", function () {
+              exportToCSV("user-table.csv");
+            });
+
+          async function exportToCSV(filename) {
+            const table = document.querySelector(".user-table");
+            const rows = Array.from(table.querySelectorAll("tr"));
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += rows
+              .map((row) => {
+                const rowData = Array.from(row.children)
+                  .map((cell) => cell.textContent)
+                  .join(",");
+                return rowData;
+              })
+              .join("\n");
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", filename);
+            document.body.appendChild(link);
+            link.click();
+          }
+
+          document
+            .querySelector("#usersTab")
+            .addEventListener("click", async () => {
+              function createTableCell(content) {
+                let cell = document.createElement("td");
+                cell.textContent = content;
+                return cell;
+              }
+              document.querySelector("#userTableBody").innerHTML = "";
+              await axios
+                .get("/api/admin/getAllUsers")
+                .then((response) => response.data)
+                .then((users) => {
+                  users.forEach((user) => {
+                    let row = document.createElement("tr");
+                    row.append(createTableCell(user.name || "N/A"));
+                    row.append(createTableCell(user.email || "N/A"));
+                    row.append(createTableCell(user.phone || "N/A"));
+                    row.append(createTableCell(user.pincode || "N/A"));
+
+                    const dateTime = new Date(user.joinDate || "N/A");
+                    const formattedDateTime = dateTime.toLocaleString();
+                    row.append(createTableCell(formattedDateTime));
+                    document.querySelector("#userTableBody").append(row);
+                    showAlert("All users loaded successfully", "success");
+                  });
+                })
+                .catch((err) =>
+                  showAlert(
+                    "Oops, an error occurred while fetching users",
+                    "danger"
+                  )
+                );
+            });
+        </script>
+      </div>
       <div id="collections" style="display: none">
         <div>
           <button id="collectionsCreate">Create New</button>
