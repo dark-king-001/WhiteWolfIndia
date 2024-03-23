@@ -5,4 +5,4 @@ const orders = require("./routes/orderRoutes");
 const user = require("./routes/userRoutes");
 const admin = require("./routes/adminRoutes");
 
-module.exports = [collections, products, coupons, orders, user];
+module.exports = [collections, products, coupons, orders, user, admin];
