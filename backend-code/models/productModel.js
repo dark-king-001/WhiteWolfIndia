@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 
 const productSchema = new mongoose.Schema({
+  itemId: { type: String, unique: true },
+  skuCode: { type: String },
   name: { type: String, required: true },
   description: { type: String, required: true },
-  skuCode: { type: String },
-  stock: { type: Number, default: 0 },
   FAQ: { type: String },
   keyFeatures: { type: String },
   how_to_use: { type: String },
@@ -25,7 +25,10 @@ const productSchema = new mongoose.Schema({
   ],
   originalPrice: { type: Number, required: true },
   offeredPrice: { type: Number, required: true },
+  category: { type: String, required: true },
+  stock: { type: Number, default: 0 },
   imageLink: [{ type: String }],
+  // videoLink: [{ type: String }],
   createdAt: { type: Date },
 });
 
