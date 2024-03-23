@@ -1,6 +1,6 @@
 // collectionController.js
 
-const Collection = require("./collectionModel");
+const Collection = require("../models/collectionsModel");
 
 // Controller function to handle GET request for retrieving all collections
 exports.getAllCollections = async (req, res) => {
