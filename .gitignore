@@ -4,3 +4,4 @@ adminConfig.js
 
 client/build
 client/node_modules
+backend-code/uploads

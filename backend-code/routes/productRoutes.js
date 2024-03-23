@@ -1,13 +1,11 @@
 const express = require("express");
 const router = express.Router();
 
-const controllers = require("../controllers/product_controllers");
+const controllers = require("../controllers/productControllers");
 
 router.get("/api/products", controllers.getAllProducts);
 
 router.get("/api/products/:itemId", controllers.getProductUsingId);
-
-router.get("/products/:itemId", controllers.getItemPage);
 
 router.get("/products/:itemId/allReviews", controllers.getAllReviews);
 
@@ -16,7 +14,6 @@ const multerMiddleware = require("../middlewares/multer");
 
 router.post(
   "/api/products",
-  isAdminAuthenticated,
   multerMiddleware.array("imageFiles"),
   // multerMiddleware.array("videoFiles"),
   async (req, res) => {
@@ -107,7 +104,6 @@ router.post(
 // PUT route to update an existing product
 router.put(
   "/api/products",
-  isAdminAuthenticated,
   multerMiddleware.array("imageFiles"),
   async (req, res) => {
     const {
@@ -185,46 +181,40 @@ router.put(
   }
 );
 
-module.exports = router;
-
 const fs = require("fs").promises;
 
-router.delete(
-  "/api/products/:itemId",
-  isAdminAuthenticated,
-  async (req, res) => {
-    try {
-      const deletedProduct = await Product.findOneAndDelete({
-        itemId: req.params.itemId,
-      });
+router.delete("/api/products/:itemId", async (req, res) => {
+  try {
+    const deletedProduct = await Product.findOneAndDelete({
+      itemId: req.params.itemId,
+    });
 
-      if (!deletedProduct) {
-        return res.redirect("/error404");
-      }
-
-      // Delete images from storage
-      if (deletedProduct.imageLink) {
-        await Promise.all(deletedProduct.imageLink.map(deleteFiles));
-      }
-
-      const ledger = new adminHistory({
-        email: req.session.email,
-        action: `Product deletion successfull (${deletedProduct.itemId})`,
-      });
-      ledger.save();
-
-      res.status(200).json({ message: "Product removed successfully" });
-    } catch (error) {
-      const ledger = new adminHistory({
-        email: req.session.email,
-        action: "product deletion failed",
-      });
-      ledger.save();
-      console.error(error);
-      res.status(500).json({ error: "Internal Server Error" });
+    if (!deletedProduct) {
+      return res.redirect("/error404");
     }
+
+    // Delete images from storage
+    if (deletedProduct.imageLink) {
+      await Promise.all(deletedProduct.imageLink.map(deleteFiles));
+    }
+
+    const ledger = new adminHistory({
+      email: req.session.email,
+      action: `Product deletion successfull (${deletedProduct.itemId})`,
+    });
+    ledger.save();
+
+    res.status(200).json({ message: "Product removed successfully" });
+  } catch (error) {
+    const ledger = new adminHistory({
+      email: req.session.email,
+      action: "product deletion failed",
+    });
+    ledger.save();
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
-);
+});
 
 async function deleteFiles(path) {
   try {
