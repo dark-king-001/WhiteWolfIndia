@@ -1,0 +1,30 @@
+.alert {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1;
+    padding: 1vh 2vh;
+    margin-bottom: 1rem;
+    border: 2px solid transparent;
+    text-transform: capitalize;
+    border-radius: 5px;
+    transition: 0.3s ease-in-out;
+  }
+
+  #graphSelect {
+    padding: 1vh;
+    border: 1px solid lightgrey;
+    border-radius: 1vh;
+    text-transform: uppercase;
+  }
+
+  .alert.success {
+    color: #fff;
+    background-color: green;
+    border-color: #fff;
+  }
+  .alert.danger {
+    color: #fff;
+    background-color: maroon;
+    border-color: #fff;
+  }
