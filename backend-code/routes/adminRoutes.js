@@ -5,11 +5,13 @@ const adminHistory = require("../models/adminHistorySchema");
 
 const controllers = require("../controllers/adminControllers");
 
-const authenticator = require("../adminConfig");
+const authenticator = require("../middlewares/adminConfig");
+const isAdminAuthenticated = authenticator.adminAuthenticater;
+const isAuthenticated = authenticator.userAuthenticator;
 
 // Define a middleware to check if the user is authenticated
 
-const UserSessionTrack = require("../schemas/user_session_manager");
+const UserSessionTrack = require("../models/userSessionManagerModel");
 
 router.get(
   "/api/admin/getAllUserSessions",
@@ -29,7 +31,7 @@ router.get("/adminwolf", isAdminAuthenticated, (req, res) => {
   res.render("Admin_page");
 });
 
-const Orders = require("../schemas/order_schema");
+const Orders = require("../models/orderModel");
 
 router.put(
   "/api/update-order-status/:razorpay_order_id",
@@ -88,7 +90,7 @@ router.get("/adminActionHistory", isAdminAuthenticated, async (req, res) => {
   }
 });
 
-const Subscriber = require("../schemas/subscriber_schema");
+const Subscriber = require("../models/subscriberModel");
 
 router.get("/api/admin/subscribe", isAdminAuthenticated, async (req, res) => {
   try {
