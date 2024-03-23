@@ -144,7 +144,23 @@ app.get("*", (req, res) => {
               "{metakeywords}",
               "content='White Wolf, India, services, content, high-quality'"
             )
-            .replace("{metaauthor}", "content='white wolf India'");
+            .replace("{metaauthor}", "content='white wolf India'")
+            .replace(
+              "{SEO_body}",
+              `
+                <h1>
+                White Wolf India - Your destination for high-quality content and
+                services.
+              </h1>
+              <p>
+                Welcome to White Wolf India, where we provide top-notch content and
+                services tailored to your needs. Explore our website to discover a wide
+                range of offerings and enrich your online experience.
+              </p>
+              <p>Keywords: White Wolf, India, services, content, high-quality</p>
+            `
+            );
+
           res.send(htmlContent);
         }
       );
