@@ -95,19 +95,6 @@ router.get(
   controllers.getAllOrders
 );
 
-router.get("/coupons", isAdminAuthenticated, controllers.getAllCoupons);
-
-// user route
-router.get("/coupons/:code", controllers.getCouponsByCode);
-
-router.post("/coupons", isAdminAuthenticated, controllers.addNewCoupon);
-
-router.delete(
-  "/coupons/:code",
-  isAdminAuthenticated,
-  controllers.deleteCouponByCode
-);
-
 router.get("/adminActionHistory", isAdminAuthenticated, async (req, res) => {
   try {
     const completeLedger = await adminHistory.find();
