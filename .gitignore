@@ -1,8 +1,0 @@
-node_modules
-.env
-accessData.csv.log
-adminConfig.js
-
-client/build
-client/node_modules
-backend-code/uploads
