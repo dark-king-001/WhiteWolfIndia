@@ -84,6 +84,18 @@
             </a>
           </li>
           <li>
+            <a href="#" onclick="selectSection('analytics')" id="analyticsTab">
+              <i class="fas fa-user"></i>
+              <span class="nav-item">users</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" onclick="selectSection('orders')" id="ordersTab">
+              <i class="fas fa-user"></i>
+              <span class="nav-item">users</span>
+            </a>
+          </li>
+          <li>
             <a
               href="#"
               onclick="selectSection('collections')"
@@ -107,6 +119,12 @@
           </li>
           <li>
             <a href="#" onclick="selectSection('coupons')" id="couponTab">
+              <i class="fas fa-gift"></i>
+              <span class="nav-item">Coupons</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" onclick="selectSection('history')" id="historyTab">
               <i class="fas fa-gift"></i>
               <span class="nav-item">Coupons</span>
             </a>
@@ -205,7 +223,281 @@
             });
         </script>
       </div>
-      <div id="analytics">
+      <div id="orders" style="display: none">
+        <div>
+          <h1>
+            Orders
+            <button class="export-btn ml-2" onclick="exportToCSV()">
+              Export CSV
+              <iconify-icon icon="ic:baseline-file-download"></iconify-icon>
+            </button>
+          </h1>
+
+          <div class="orders-container">
+            <ul class="list">
+              <li onclick="loadAllOrders()" id="all">All Orders</li>
+              <li onclick="loadPendingOrders()" id="Pending">Pending Orders</li>
+              <li onclick="loadSentOrders()" id="Sent">Sent Orders</li>
+              <li onclick="loadDeliveringOrders()" id="Delivering">
+                Delivering Orders
+              </li>
+              <li onclick="loadDeliveredOrders()" id="Delivered">
+                Delivered Orders
+              </li>
+            </ul>
+            <div>
+              <div class="order-table" id="allOrdersTab">
+                <table
+                  class="table table-bordered table-striped"
+                  style="overflow-y: auto"
+                >
+                  <thead>
+                    <tr>
+                      <th style="width: 10%">Order Id</th>
+                      <th style="width: 10%">Identification</th>
+                      <th style="width: 15%">Products</th>
+                      <th style="width: 30%">Address</th>
+                      <th style="width: 5%">Method</th>
+                      <th style="width: 15%">Date</th>
+                      <th style="width: 15%">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="OrdersBody" style="overflow: hidden"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <script>
+          function exportToCSV() {
+            const rows = document.querySelectorAll("#allOrdersTab tbody tr");
+            const data = Array.from(rows, (row) => {
+              const columns = row.querySelectorAll("td:not(:last-child)");
+              return Array.from(columns, (column) => column.textContent).join(
+                ","
+              );
+            }).join("\n");
+
+            const blob = new Blob([data], { type: "text/csv" });
+
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "orders.csv";
+
+            link.click();
+          }
+
+          let Orders = [];
+          let selectedOrdersTab = "all";
+          function createTableCell(content) {
+            let cell = document.createElement("td");
+            cell.innerHTML = content;
+            return cell;
+          }
+          function dynamicOrderStatus(Id, content) {
+            let cell = document.createElement("td");
+            cell.innerHTML = `
+                      <select id="myDropdown_${Id}">
+                          <option value="Pending" ${
+                            content === "Pending" ? "selected" : ""
+                          }>Pending</option>
+                          <option value="Sent" ${
+                            content === "Sent" ? "selected" : ""
+                          }>Sent</option>
+                          <option value="Delivering" ${
+                            content === "Delivering" ? "selected" : ""
+                          }>Delivering</option>
+                          <option value="Delivered" ${
+                            content === "Delivered" ? "selected" : ""
+                          }>Delivered</option>
+                      </select>
+                  `;
+            return cell;
+          }
+          const loadOrders = async () => {
+            await axios
+              .get("/api/admin/getAllOrders")
+              .then((response) => response.data)
+              .then((data) => {
+                Orders = data;
+                loadAllOrders();
+                showAlert("Orders loaded successfully", "success");
+              })
+              .catch((err) =>
+                showAlert("server refused on order data", "danger")
+              );
+          };
+
+          function loadAllOrders() {
+            document
+              .querySelector("#" + selectedOrdersTab)
+              .classList.remove("active");
+            selectedOrdersTab = "all";
+            document
+              .querySelector("#" + selectedOrdersTab)
+              .classList.add("active");
+            loadOrdersTable(Orders);
+          }
+
+          function loadPendingOrders() {
+            const pendingOrders = Orders.filter(
+              (order) => order.status === "Pending"
+            );
+            document
+              .querySelector("#" + selectedOrdersTab)
+              .classList.remove("active");
+            selectedOrdersTab = "Pending";
+            document
+              .querySelector("#" + selectedOrdersTab)
+              .classList.add("active");
+
+            loadOrdersTable(pendingOrders);
+          }
+
+          function loadSentOrders() {
+            const sentOrders = Orders.filter(
+              (order) => order.status === "Sent"
+            );
+            document
+              .querySelector("#" + selectedOrdersTab)
+              .classList.remove("active");
+            selectedOrdersTab = "Sent";
+            document
+              .querySelector("#" + selectedOrdersTab)
+              .classList.add("active");
+
+            loadOrdersTable(sentOrders);
+          }
+
+          function createTableCell(data, isOrderId = false) {
+            let cell = document.createElement("td");
+            if (isOrderId && data.length > 11) {
+              cell.textContent = data.substring(0, 11) + "..";
+            } else {
+              cell.textContent = data;
+            }
+            return cell;
+          }
+
+          function loadDeliveringOrders() {
+            const deliveringOrders = Orders.filter(
+              (order) => order.status === "Delivering"
+            );
+            document
+              .querySelector("#" + selectedOrdersTab)
+              .classList.remove("active");
+            selectedOrdersTab = "Delivering";
+            document
+              .querySelector("#" + selectedOrdersTab)
+              .classList.add("active");
+
+            loadOrdersTable(deliveringOrders);
+          }
+
+          function loadDeliveredOrders() {
+            const deliveredOrders = Orders.filter(
+              (order) => order.status === "Delivered"
+            );
+            document
+              .querySelector("#" + selectedOrdersTab)
+              .classList.remove("active");
+            selectedOrdersTab = "Delivered";
+            document
+              .querySelector("#" + selectedOrdersTab)
+              .classList.add("active");
+
+            loadOrdersTable(deliveredOrders);
+          }
+
+          function loadOrdersTable(orders) {
+            document.querySelector("#OrdersBody").innerHTML = "";
+            orders.forEach(async (order) => {
+              let row = document.createElement("tr");
+              row.append(createTableCell(order.razorpay_order_id, true));
+
+              row.append(
+                createTableCell(`${order.name}, ${order.email}, ${order.phone}`)
+              );
+              let names = "";
+              await Promise.all(
+                order.products.map(async (product) => {
+                  try {
+                    const response = await axios.get(
+                      `/api/products/${product.itemId}`
+                    );
+                    names += ` ${response.data.name}`;
+                  } catch (err) {
+                    console.log("error fetching products", err);
+                  }
+                })
+              );
+              row.append(createTableCell(names));
+              row.append(
+                `${order.address}, locality ${order.locality}, landmark ${order.landmark}, city, ${order.city} (Pincode : ${order.pincode})`
+              );
+              row.append(createTableCell(order.deliveryMethod || "Prepaid"));
+              const dateTime = new Date(order.Date);
+              const formattedDateTime = dateTime.toLocaleString();
+              row.append(createTableCell(formattedDateTime));
+              row.append(
+                dynamicOrderStatus(order.razorpay_order_id, order.status)
+              );
+              document.querySelector("#OrdersBody").append(row);
+              document
+                .querySelector(`#myDropdown_${order.razorpay_order_id}`)
+                .addEventListener("change", async (event) => {
+                  const selectedValue = event.target.value;
+                  await axios
+                    .put(
+                      "/api/update-order-status/" + order.razorpay_order_id,
+                      {
+                        status: selectedValue,
+                      }
+                    )
+                    .then((response) => {
+                      showAlert("order status updated successfully", "success");
+                      document
+                        .querySelector("#" + selectedOrdersTab)
+                        .classList.remove("active");
+
+                      order.status = selectedValue;
+                      selectedOrdersTab = selectedValue;
+
+                      document
+                        .querySelector("#" + selectedOrdersTab)
+                        .classList.add("active");
+
+                      switch (selectedValue) {
+                        case "Pending":
+                          loadPendingOrders();
+                          break;
+                        case "Sent":
+                          loadSentOrders();
+                          break;
+                        case "Delivering":
+                          loadDeliveringOrders();
+                          break;
+                        case "Delivered":
+                          loadDeliveredOrders();
+                          break;
+                        default:
+                          loadAllOrders();
+                          break;
+                      }
+                    })
+                    .catch((error) => {
+                      showAlert("error updating order status", "danger");
+                    });
+                });
+            });
+          }
+
+          document
+            .querySelector("#ordersTab")
+            .addEventListener("click", loadOrders);
+        </script>
+      </div>
+      <div id="analytics" style="display: none">
         <section class="main-course">
           <h1>Orders Analytics</h1>
           <div class="course-box">
@@ -2230,6 +2522,67 @@
                 .catch((err) =>
                   showAlert(
                     "an error occured while fetching the coupons",
+                    "danger"
+                  )
+                );
+            });
+        </script>
+      </div>
+      <div id="history" style="display: none">
+        <div>
+          <h1>View History</h1>
+
+          <div class="coupon-container" style="padding: 0vh 0vh 0vh 2vh">
+            <div
+              style="
+                overflow: auto;
+                height: 100%;
+                overflow-y: scroll;
+                padding-right: 1vh;
+              "
+            >
+              <table id="couponList">
+                <thead>
+                  <tr>
+                    <th>Email</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody class="adminHistoryTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <script>
+          function addLedgerRow(data) {
+            const { email, dateTime, action } = data;
+            const formattedDateTime = new Date(dateTime).toLocaleString();
+            let row = document.createElement("tr");
+            row.innerHTML = `
+              <tr>
+                  <td>${email}</td>
+                  <td>${formattedDateTime}</td>
+                  <td>${action}</td>
+              </tr>
+              `;
+            document.querySelector(".adminHistoryTableBody").append(row);
+          }
+          document
+            .querySelector("#historyTab")
+            .addEventListener("click", async () => {
+              await axios
+                .get("/adminActionHistory")
+                .then((response) => response.data)
+                .then((ledger) => {
+                  showAlert("Admin history loaded successfully", "success");
+                  document.querySelector(".adminHistoryTableBody").innerHTML =
+                    "";
+                  ledger.forEach((data) => addLedgerRow(data));
+                })
+                .catch((err) =>
+                  showAlert(
+                    "An error occured while fetching the history",
                     "danger"
                   )
                 );
