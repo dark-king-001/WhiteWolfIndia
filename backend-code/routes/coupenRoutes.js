@@ -6,12 +6,16 @@ const authenticator = require("../middlewares/adminConfig");
 const isAdminAuthenticated = authenticator.adminAuthenticater;
 const isAuthenticated = authenticator.userAuthenticator;
 
-router.get("/coupons", controllers.getAllCoupons);
+router.get("/coupons", isAdminAuthenticated, controllers.getAllCoupons);
 
 router.get("/coupons/:code", controllers.getCouponsByCode);
 
-router.post("/coupons", controllers.addNewCoupon);
+router.post("/coupons", isAdminAuthenticated, controllers.addNewCoupon);
 
-router.delete("/coupons/:code", controllers.deleteCouponByCode);
+router.delete(
+  "/coupons/:code",
+  isAdminAuthenticated,
+  controllers.deleteCouponByCode
+);
 
 module.exports = router;

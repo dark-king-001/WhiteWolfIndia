@@ -18,6 +18,7 @@ const multerMiddleware = require("../middlewares/multer");
 
 router.post(
   "/api/products",
+  isAdminAuthenticated,
   multerMiddleware.array("imageFiles"),
   // multerMiddleware.array("videoFiles"),
   async (req, res) => {
@@ -108,6 +109,7 @@ router.post(
 // PUT route to update an existing product
 router.put(
   "/api/products",
+  isAdminAuthenticated,
   multerMiddleware.array("imageFiles"),
   async (req, res) => {
     const {
@@ -187,38 +189,42 @@ router.put(
 
 const fs = require("fs").promises;
 
-router.delete("/api/products/:itemId", async (req, res) => {
-  try {
-    const deletedProduct = await Product.findOneAndDelete({
-      itemId: req.params.itemId,
-    });
+router.delete(
+  "/api/products/:itemId",
+  isAdminAuthenticated,
+  async (req, res) => {
+    try {
+      const deletedProduct = await Product.findOneAndDelete({
+        itemId: req.params.itemId,
+      });
 
-    if (!deletedProduct) {
-      return res.redirect("/error404");
+      if (!deletedProduct) {
+        return res.redirect("/error404");
+      }
+
+      // Delete images from storage
+      if (deletedProduct.imageLink) {
+        await Promise.all(deletedProduct.imageLink.map(deleteFiles));
+      }
+
+      const ledger = new adminHistory({
+        email: req.session.email,
+        action: `Product deletion successfull (${deletedProduct.itemId})`,
+      });
+      ledger.save();
+
+      res.status(200).json({ message: "Product removed successfully" });
+    } catch (error) {
+      const ledger = new adminHistory({
+        email: req.session.email,
+        action: "product deletion failed",
+      });
+      ledger.save();
+      console.error(error);
+      res.status(500).json({ error: "Internal Server Error" });
     }
-
-    // Delete images from storage
-    if (deletedProduct.imageLink) {
-      await Promise.all(deletedProduct.imageLink.map(deleteFiles));
-    }
-
-    const ledger = new adminHistory({
-      email: req.session.email,
-      action: `Product deletion successfull (${deletedProduct.itemId})`,
-    });
-    ledger.save();
-
-    res.status(200).json({ message: "Product removed successfully" });
-  } catch (error) {
-    const ledger = new adminHistory({
-      email: req.session.email,
-      action: "product deletion failed",
-    });
-    ledger.save();
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
   }
-});
+);
 
 async function deleteFiles(path) {
   try {
