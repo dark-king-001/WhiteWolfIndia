@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Dashboard - White Wolf India</title>
+    <link rel="stylesheet" href="/css/adminstyle.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+    <link rel="shortcut icon" type="image/x-icon" href="../assets/whitewolflog.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/canvasjs/1.7.0/canvasjs.min.js"></script>
+    <style>
+
+        .export-btn{
+            background-color:green;
+            padding: 1vh;
+            font-size: 2vh;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .export-btn:hover{
+            background-color: darkgreen;
+        }
+
+        @media only screen and (max-width: 768px) {
+            #productsSection {
+                padding: 2rem;
+            }
+        }
+
+        .form-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .form-container > div {
+            width: 48%; 
+        }
+
+        output{
+            display: flex;
+            flex-direction: row;
+            width: 30vw;
+        }
+
+        output img{
+            height: 15vh;
+            margin: 0.5rem;
+            border-radius: 1rem;
+            width:auto;
+        }
+
+        .top-selling{
+            border: 1px solid lightgrey;
+            border-radius: 1vh;
+            overflow-y: scroll;
+            display: flex;
+            height: 40vh;
+            padding: 2vh;
+            align-items: center;
+            flex-direction: column;
+            text-align: left;
+        }
+        .form-container input,
+        .form-container textarea,
+        .form-container select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            border: 1px solid lightgrey;
+            border-radius: 1rem;
+        }
+
+        .form-container button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        canvas{
+            width:auto!important;
+            height: 250px !important;
+        }
+    </style>
+</style>
+<div id="alertContainer"></div>
+<style>
+   .alert {
+       position: fixed;
+       top: 1rem;
+       right: 1rem;
+       z-index: 1;
+       padding: 1vh 2vh;
+       margin-bottom: 1rem;
+       border: 2px solid transparent;
+       text-transform: capitalize;
+       border-radius: 5px;
+       transition: 0.3s ease-in-out;
+     }
+
+     #graphSelect{
+         padding: 1vh;
+         border: 1px solid lightgrey;
+         border-radius: 1vh;
+         text-transform: uppercase;
+     }
+
+     .alert.success {
+       color: #fff;
+       background-color: green;
+       border-color: #fff;
+     }
+     .alert.danger {
+       color: #fff;
+       background-color: maroon;
+       border-color: #fff;
+     }
+   </style>
+   <script>
+     function showAlert(message, type) {
+       const alertContainer = document.getElementById("alertContainer");
+
+       const alert = document.createElement("div");
+       alert.className = `alert ${type}`;
+       alert.innerHTML = `${message}<span class="close" onclick="closeAlert(this)"> &#9587;</span>`;
+
+       alertContainer.appendChild(alert);
+
+       setTimeout(() => {
+         closeAlert(alert.querySelector(".close"));
+       }, 4000);
+     }
+
+     function closeAlert(closeButton) {
+       const alert = closeButton.parentElement;
+       alert.style.display = "none";
+     }
+   </script>
+</head>
+
+<body>
+    <div class="container">
+        <nav>
+            <ul>
+                <li class="logo">
+                        <img src="/assets/ww side name logo.png" alt="">
+                        <span class="nav-item admin">Admin Dashboard</span>
+                </li>
+                <li><a href="#" onclick="selectSection('usersSection')" id="usersTab">
+                    <i class="fas fa-user"></i>
+                    <span class="nav-item">Registered Users</span>
+                </a></li>
+                <li><a href="#" onclick="selectSection('analyticsSection')" id="analyticsTab">
+                    <i class="fas fa-chart-line"></i>
+                    <span class="nav-item">Analytics</span>
+                </a></li>
+                <li><a href="#" onclick="selectSection('ordersSection')" id="ordersTab">
+                    <i class="fas fa-store"></i>
+                    <span class="nav-item">Orders</span>
+                </a></li>
+                <li><a href="#" onclick="selectSection('productsSection')" id="productsTab">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="nav-item">Add Products</span>
+                </a></li>
+
+                <li><a href="#" onclick="selectSection('inventorySection')" id="inventoryTab">
+                    <i class="fas fa-warehouse"></i>
+                    <span class="nav-item">Inventory</span>
+                </a></li>
+
+                <li><a href="#" onclick="selectSection('couponSection')" id="couponTab">
+                    <i class="fas fa-gift"></i>
+                    <span class="nav-item">Coupons</span>
+                </a></li>
+
+                <li>
+                    <a href="#" onclick="selectSection('historySection')" id="historyTab">
+                        <i class="fas fa-clock"></i>
+                    <span class="nav-item">History</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="nav-item"><button onclick="confirmLogout()" style="background-color: transparent;color: #fff;">Log Out</button></span>
+                    </a>
+                </li>
+            </ul>
+        </nav>    
+
+        <script>
+             async function confirmLogout() {
+        if (confirm("Are you sure you want to logout?")) {
+          const response = await axios
+            .get("/logout")
+            .then((response) => {
+              if (response.status === 200) {
+                showAlert("logged out successfully", "success");
+                window.location.href = "/";
+              }
+            })
+            .catch((error) => {
+              showAlert("Failed to logout", "danger");
+              console.error("Logout failed", response.data.message);
+            });
+        } else {
+          alert("Logout canceled.");
+        }
+      }
+        </script>
+
+        <section class="main" id="usersSection" style="display: none;" >
+            <section class="main-orders">
+                <h1>User Analytics <button class="export-btn">Export CSV <iconify-icon icon="ic:baseline-file-download"></iconify-icon></button></h1>
+                <div class="user-container">
+                    <table class="user-table">
+                        <thead>
+                            <tr>
+                                <th>User Name</th>
+                                <th>Email</th>
+                                <th>Phone Number</th>
+                                <th>Pin Code</th>
+                                <th>Account Created</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <script>
+                document.querySelector('.export-btn').addEventListener('click', function() {
+                    exportToCSV('user-table.csv');
+                });
+
+                async function exportToCSV(filename) {
+                    const table = document.querySelector('.user-table');
+                    const rows = Array.from(table.querySelectorAll('tr'));
+
+                    let csvContent = "data:text/csv;charset=utf-8,";
+                    csvContent += rows.map(row => {
+                        const rowData = Array.from(row.children).map(cell => cell.textContent).join(',');
+                        return rowData;
+                    }).join('\n');
+
+                    const encodedUri = encodeURI(csvContent);
+                    const link = document.createElement('a');
+                    link.setAttribute('href', encodedUri);
+                    link.setAttribute('download', filename);
+                    document.body.appendChild(link);
+                    link.click();
+                }
+
+                document.querySelector('#usersTab').addEventListener('click', async () => {
+                    function createTableCell(content) {
+                        let cell = document.createElement('td')
+                        cell.textContent = content;
+                        return cell;
+                    }
+                    document.querySelector('#userTableBody').innerHTML = ''
+                    await axios.get('/api/admin/getAllUsers')
+                    .then(response => response.data)
+                    .then(users => {
+                        users.forEach(user => {
+                            let row = document.createElement('tr')
+                            row.append(createTableCell(user.name || "N/A"))
+                            row.append(createTableCell(user.email || "N/A"))
+                            row.append(createTableCell(user.phone || "N/A"))
+                            row.append(createTableCell(user.pincode || "N/A"))
+
+                            const dateTime = new Date(user.joinDate || "N/A");
+                            const formattedDateTime = dateTime.toLocaleString();
+                            row.append(createTableCell(formattedDateTime))
+                            document.querySelector('#userTableBody').append(row)
+                            showAlert("All users loaded successfully","success");
+                        })
+                    })
+                    .catch(err => showAlert("Oops, an error occurred while fetching users","danger"))
+                });
+            </script>
+
+        </section>   
+
+        <section class="main" id="analyticsSection" >
+            <!-- orders analytics -->
+            <!-- done -->
+            <section class="main-course">
+                <h1>Orders Analytics</h1>
+                <div class="course-box">
+                    <div>
+                        <h1>Orders per Day</h1>
+                        <h2 class="total_orders">Total Orders 0, Pending Orders 0</h2>
+                        <select name="ordersGraphSelect" id="ordersGraphSelect">
+                            <option value="7">last 7 days</option>
+                            <option value="30">last 30 days</option>
+                            <option value="100">last 100 days</option>
+                            <option value="365">last 365 days</option>
+                            <option value="1780">last 4 years</option>
+                        </select>
+                        <canvas id="ordersChart" class="chart"></canvas>
+                    </div>
+                    <div>
+                        <h1>Online Store Sessions</h1>
+                        <h2 class="totalStoreSessions"></h2>
+                        <select name="storeSessionsSelect" id="storeSessionsGraphSelect">
+                            <option value="7">last 7 days</option>
+                            <option value="30">last 30 days</option>
+                            <option value="100">last 100 days</option>
+                            <option value="365">last 365 days</option>
+                            <option value="1780">last 4 years</option>
+                        </select>
+                        <canvas id="storeSessionsChart" class="chart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- convertion rate and top selling products -->
+            <!-- done -->
+            <section class="main-course">
+                <div class="course-box">
+                    <div>
+                    <h1>Online Store Conversion Rate<h2 class="averageConvertionRate">0%</h2></h1>
+                    
+                        <h2 class="addedToCart">Added to Cart: 0%</h2>
+                        <h2 class="reachedCheckout">Reached Checkout: 0%</h2>
+                        <h2 class="sessionsConverted">Sessions Converted: 0%</h2>
+                    </div>
+                    <div class="top-selling">
+                        <h2>Top Selling Products</h2>
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                          <tbody id="topSellingProductsBody">
+                          </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- total sales and average order value -->
+            <!-- done -->
+            <section class="main-course">
+                <div class="course-box">
+                    <div>
+                        <h1>Total Sales</h1>
+                        <h2 class="total_sales"></h2>
+                        <select name="salesGraphSelect" id="salesGraphSelect">
+                            <option value="7">last 7 days</option>
+                            <option value="30">last 30 days</option>
+                            <option value="100">last 100 days</option>
+                            <option value="365">last 365 days</option>
+                            <option value="1780">last 4 years</option>
+                        </select>
+                        <canvas id="salesChart" class="chart"></canvas>
+                    </div>
+                    <div>
+                        <h1>Average Order Value</h1>
+                        <h2 class="averageOrderValue">Rs 0</h2>
+                        <select name="orderValueGraphSelect" id="orderValueGraphSelect">
+                            <option value="7">last 7 days</option>
+                            <option value="30">last 30 days</option>
+                            <option value="100">last 100 days</option>
+                            <option value="365">last 365 days</option>
+                            <option value="1780">last 4 years</option>
+                        </select>
+                        <canvas id="orderValueChart" class="chart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- top page rankings -->
+            <!-- on hold -->
+            <section class="main-course">
+                <div class="course-box">
+                    <div class="top-landing">
+                        <h2>Top 18 Landing Pages</h2>
+                        <div class="landingPageRankings"  style="display: flex; flex-wrap: wrap;">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="main-course">
+                <h1>User Analytics</h1>
+                <div class="course-box">
+                    <div>
+                        <h1>User Registered</h1>
+                        <h2 class="registered_users">Total Registered Users: 0</h2>
+                        <select name="usersGraphSelect" id="usersGraphSelect">
+                            <option value="7">last 7 days</option>
+                            <option value="30">last 30 days</option>
+                            <option value="100">last 100 days</option>
+                            <option value="365">last 365 days</option>
+                            <option value="1780">last 4 years</option>
+                        </select>
+                        <canvas id="usersChart" class="chart"></canvas>
+                    </div>
+                    <div>
+                        <h1>User Subscribed</h1>
+                        <h2 class="subscribed_users">Total Subscribed Users: 0</h2>
+                        <select name="usersSubGraphSelect" id="usersGraphSelect">
+                            <option value="7">last 7 days</option>
+                            <option value="30">last 30 days</option>
+                            <option value="100">last 100 days</option>
+                            <option value="365">last 365 days</option>
+                            <option value="1780">last 4 years</option>
+                        </select>
+                        <canvas id="usersSubChart" class="chart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+
+            <script>
+                let orders = []
+                let users = []
+                let subscribers = []
+                let userSessions = []
+                let topPages = {}
+
+                document.addEventListener('DOMContentLoaded', async () => {
+
+                    await axios.get('/api/admin/getAllOrders')
+                    .then(response => response.data)
+                    .then(ordersData => {orders = ordersData})
+                    .catch(err => { showAlert("something went wrong loading Users data", "danger"); console.log(err)})
+                    
+                    await axios.get('/api/admin/getAllUsers')
+                    .then(response => response.data)
+                    .then(usersData => {users = usersData})
+                    .catch(err => { showAlert("something went wrong loading Users data", "danger"); console.log(err)})
+
+                    
+                    await axios.get('/api/admin/getAllUserSessions')
+                    .then(response => response.data)
+                    .then(usersSessionData => {userSessions = usersSessionData})
+                    .catch(err => { showAlert("something went wrong loading Users data", "danger"); console.log(err)})
+
+                    
+                    await axios.get('/api/admin/subscribe')
+                    .then(response => response.data)
+                    .then(subscribersData => {subscribers = subscribersData})
+                    .catch(err => { showAlert("something went wrong loading Users data", "danger"); console.log(err)})
+
+                    let pendingOrders = orders.filter(order => order.status === 'Pending')
+                    document.querySelector('.total_orders').textContent = `Total Orders ${orders.length}, Pending Orders : ${pendingOrders.length}`;
+                    drawOrdersGraph(7)
+
+
+                    document.querySelector('.totalStoreSessions') .textContent = `Total Store Sessions: ${userSessions.length}`
+                    let convertedSessions = userSessions.filter(session => session.sessionConverted > 0);
+                    document.querySelector('.sessionsConverted').textContent = `Sessions Converted: ${Math.floor((convertedSessions.length/userSessions.length)*100)}%`;
+                    let addedToCart = userSessions.filter(session => session.addedToCart > 0);
+                    document.querySelector('.addedToCart') .textContent = `Added to Cart: ${Math.floor((addedToCart.length/userSessions.length)*100)}%,`;
+                    let reachedCheckout = userSessions.filter(session => session.reachedCheckout > 0);
+                    document.querySelector('.reachedCheckout').textContent = `Reached Checkout: ${(Math.floor(reachedCheckout.length/userSessions.length)*100)}%`;
+
+                    let averageConvertionRate = (((convertedSessions.length + addedToCart.length + reachedCheckout.length)/3)/userSessions.length)*100
+                    document.querySelector('.averageConvertionRate').textContent = Math.floor(averageConvertionRate) + "%"
+                    drawStoreSessionsGraph(7)
+                    updateTopSellingProducts();
+
+
+                    let totalSales = orders.reduce((total, order) => total + order.totalPayment, 0)
+                    document.querySelector('.total_sales').textContent = `Total Sales Rs ${totalSales}`;
+                    drawSalesGraph(7);
+                    let averageOrderValue = orders.reduce((total, order) => total + order.totalPayment, 0)/orders.length
+                    document.querySelector('.averageOrderValue').textContent = "Rs " + Math.floor(averageOrderValue);
+                    drawAverageOrderValueGraph(7);
+
+                    document.querySelector('.registered_users').textContent = "Total Registered Users: " + users.length
+                    usersGraph(7);
+                    document.querySelector('.subscribed_users').textContent = "Total Subscribed Users: " + subscribers.length
+                    userSessions.forEach(session => {
+                        if (topPages[session.sessionLandingUrl]){
+                            topPages[session.sessionLandingUrl] += 1;
+                        } else {
+                            topPages[session.sessionLandingUrl] = 1
+                        }
+                    })
+                    const rankedUrls = Object.keys(topPages).map(url => ({ url, count: topPages[url] })).sort((a, b) => b.count - a.count).slice(0, 18)
+                    rankedUrls.forEach(data => {
+                        document.querySelector(".landingPageRankings").innerHTML += `<p>${data.url} [${data.count}]</p>, <br>`
+                    })
+                });
+
+                document.querySelector(`#ordersGraphSelect`).addEventListener('change', async event => {
+                    drawOrdersGraph(event.target.value)
+                });
+                function drawOrdersGraph(lastDays) {
+
+                    const today = new Date();
+                    const startDate = new Date();
+                    startDate.setDate(today.getDate() - lastDays + 1);
+                    const endDate = today;
+
+                    const ordersPerDay = Array.from({ length: lastDays }, (_, i) => {
+                        const date = new Date(startDate);
+                        date.setDate(startDate.getDate() + i);
+
+                        const dayOrders = orders.filter(order => {
+                            const orderDate = new Date(order.createdDate);
+
+                            return orderDate.getFullYear() === date.getFullYear() && orderDate.getMonth() === date.getMonth() && orderDate.getDate() === date.getDate();
+
+                        });
+
+                        return { date, count: dayOrders.length };
+                    });
+
+                    const ctx = document.getElementById('ordersChart').getContext('2d');
+                    const chart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: ordersPerDay.map(item => item.date.toDateString()),
+                            datasets: [{
+                                label: 'Orders per Day',
+                                data: ordersPerDay.map(item => item.count),
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                }
+
+                document.querySelector(`#storeSessionsGraphSelect`).addEventListener('change', async event => {
+                    drawStoreSessionsGraph(event.target.value)
+                });
+                function drawStoreSessionsGraph(lastDays) {
+                    const today = new Date();
+                    const startDate = new Date();
+                    startDate.setDate(today.getDate() - lastDays + 1);
+                    const endDate = today;
+
+                    const storeSessionsPerDay = Array.from({ length: lastDays }, (_, i) => {
+                        const date = new Date(startDate);
+                        date.setDate(startDate.getDate() + i);
+
+                        const daySessions = userSessions.filter(session => {
+                            const sessionDate = new Date(session.createdAt);
+
+                            return sessionDate.getFullYear() === date.getFullYear() && sessionDate.getMonth() === date.getMonth() && sessionDate.getDate() === date.getDate();
+
+                        });
+
+                        return { date, count: daySessions.length };
+                    });
+
+                    const ctx = document.getElementById('storeSessionsChart').getContext('2d');
+                    const chart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: storeSessionsPerDay.map(item => item.date.toDateString()),
+                            datasets: [{
+                                label: 'Sessions per Day',
+                                data: storeSessionsPerDay.map(item => item.count),
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                    }
+
+                document.querySelector(`#salesGraphSelect`).addEventListener('change', async event => {
+                    drawSalesGraph(event.target.value)
+                });
+                function drawSalesGraph(lastDays) {
+                    const today = new Date();
+                    const startDate = new Date();
+                    startDate.setDate(today.getDate() - lastDays + 1);
+                    const endDate = today;
+
+                    const salesPerDay = Array.from({ length: lastDays }, (_, i) => {
+                        const date = new Date(startDate);
+                        date.setDate(startDate.getDate() + i);
+
+                        const dayOrders = orders.filter(order => {
+                            const orderDate = new Date(order.createdDate);
+
+                            return orderDate.getFullYear() === date.getFullYear() && orderDate.getMonth() === date.getMonth() && orderDate.getDate() === date.getDate();
+
+                        });
+                        const totalPayment = dayOrders.reduce((total, order) => total + order.totalPayment, 0);
+
+                        return { date, totalPayment };
+                    });
+
+                    const ctx = document.getElementById('salesChart').getContext('2d');
+                    const chart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: salesPerDay.map(item => item.date.toDateString()),
+                            datasets: [{
+                                label: 'Sales per Day',
+                                data: salesPerDay.map(item => item.totalPayment),
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function(value, index, values) {
+                                            return '₹' + value.toFixed(2);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                document.querySelector(`#orderValueGraphSelect`).addEventListener('change', async event => {
+                    drawAverageOrderValueGraph(event.target.value)
+                });
+                function drawAverageOrderValueGraph(lastDays) {
+                    const today = new Date();
+                    const startDate = new Date();
+                    startDate.setDate(today.getDate() - lastDays + 1);
+                    const endDate = today;
+
+                    const averageOrderValuePerDay = Array.from({ length: lastDays }, (_, i) => {
+                        const date = new Date(startDate);
+                        date.setDate(startDate.getDate() + i);
+
+                        const dayOrders = orders.filter(order => {
+                            const orderDate = new Date(order.createdDate);
+
+                            return orderDate.getFullYear() === date.getFullYear() && orderDate.getMonth() === date.getMonth() && orderDate.getDate() === date.getDate();
+
+                        });
+                        const averageOrderValue = dayOrders.length > 0 ? dayOrders.reduce((total, order) => total + order.totalPayment, 0) / dayOrders.length : 0;
+
+                        return { date, averageOrderValue };
+                    });
+
+                    const ctx = document.getElementById('orderValueChart').getContext('2d');
+                    const chart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: averageOrderValuePerDay.map(item => item.date.toDateString()),
+                            datasets: [{
+                                label: 'Average Order Value per Day',
+                                data: averageOrderValuePerDay.map(item => item.averageOrderValue),
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function(value, index, values) {
+                                            return '₹' + value.toFixed(2);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                document.querySelector(`#usersGraphSelect`).addEventListener('change', async event => {
+                    usersGraph(event.target.value)
+                });
+                function usersGraph(lastDays) {
+                    const today = new Date();
+                    const startDate = new Date();
+                    startDate.setDate(today.getDate() - lastDays + 1);
+                    const endDate = today;
+
+                    const registeredUsersPerDay = Array.from({ length: lastDays }, (_, i) => {
+                        const date = new Date(startDate);
+                        date.setDate(startDate.getDate() + i);
+
+                        const dayUsers = users.filter(user => {
+                            const userDate = new Date(user.joinDate);
+                            return userDate.getFullYear() === date.getFullYear() && userDate.getMonth() === date.getMonth() && userDate.getDate() === date.getDate();
+                        });
+
+                        return { date, count : dayUsers.length };
+                    });
+
+                    const ctx = document.getElementById('usersChart').getContext('2d');
+                    const chart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: registeredUsersPerDay.map(item => item.date.toDateString()),
+                            datasets: [{
+                                label: 'Average Order Value per Day',
+                                data: registeredUsersPerDay.map(item => item.count),
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                }
+                            }
+                        }
+                    });
+                }
+       
+                function calculateSalesToday() {
+                    const today = new Date();
+                    const todayOrders = orders.filter(order => {
+                        const orderDate = new Date(order.Date);
+                        return orderDate.getDate() === today.getDate() &&
+                            orderDate.getMonth() === today.getMonth() &&
+                            orderDate.getFullYear() === today.getFullYear();
+                    });
+
+                    return todayOrders.reduce((total, order) => total + order.totalPayment, 0);
+                }
+
+                function calculateCompletedOrders() {
+
+                    const completedOrders = orders.filter(order => order.status === 'Delivered');
+                    return completedOrders.length;
+                }
+
+                async function updateTopSellingProducts() {
+                    const tableBody = document.querySelector('#topSellingProductsBody');
+                    tableBody.innerHTML = '';
+                    calculateTopSellingProducts(5)
+                    .then (topSellingProducts => {
+                        topSellingProducts.forEach(async (product) => {
+                            console.log(product)
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
+                                    <img src="${product.image}" alt="${product.name}" style="max-width: 50px; max-height: 50px;">
+                                </td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: left;">${product.name}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: left;">${product.unitsSold} Units Sold</td>
+                            `;
+                            tableBody.appendChild(row);
+                        });
+                    })
+                }
+
+                async function calculateTopSellingProducts(numProducts) {
+
+                    const productSalesMap = new Map();
+
+                    orders.forEach(order => {
+                        order.products.forEach(product => {
+                            const productId = product.itemId;
+                            const unitsSold = product.quantity;
+
+                            if (productSalesMap.has(productId)) {
+                                productSalesMap.set(productId, productSalesMap.get(productId) + unitsSold);
+                            } else {
+                                productSalesMap.set(productId, unitsSold);
+                            }
+                        });
+                    });
+
+                    const sortedProducts = [...productSalesMap.entries()]
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, numProducts);
+
+                    const topSellingProducts = await Promise.all(sortedProducts.map(async ([productId, unitsSold]) => {
+                        try {
+                            const response = await axios.get(`/api/products/${productId}`);
+                            const productDetails = response.data;
+
+                            return {
+                                name: productDetails.name,
+                                image: productDetails.imageLink[0],
+                                unitsSold: unitsSold
+                            };
+                        } catch (error) {
+                            console.error(`Error fetching product details for productId ${productId}:`, error);
+
+                            return {};
+                        }
+                    }));
+
+                    return topSellingProducts;
+                }
+            </script>
+
+        </section>   
+
+        <section class="main" id="ordersSection" style="display: none;">
+            <section class="main-orders">
+                <h1>Orders  <button class="export-btn ml-2" onclick="exportToCSV()">Export CSV <iconify-icon icon="ic:baseline-file-download"></iconify-icon></button></h1>
+
+                <div class="orders-container">
+                    <ul class="list">
+                        <li onclick="loadAllOrders()" id="all">All Orders</li>
+                        <li onclick="loadPendingOrders()" id="Pending">Pending Orders</li>
+                        <li onclick="loadSentOrders()" id="Sent">Sent Orders</li>
+                        <li onclick="loadDeliveringOrders()" id="Delivering">Delivering Orders</li>
+                        <li onclick="loadDeliveredOrders()" id="Delivered">Delivered Orders</li>
+                    </ul>
+                    <div>
+                        <div class="order-table" id="allOrdersTab">
+                            <table class="table table-bordered table-striped" style="overflow-y: auto;">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 10%;">Order Id</th>
+                                        <th style="width: 10%;">Identification</th>
+                                        <th style="width: 15%;">Products</th>
+                                        <th style="width: 30%;">Address</th>
+                                        <th style="width: 5%;">Method</th>
+                                        <th style="width: 15%;">Date</th>
+                                        <th style="width: 15%;">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="OrdersBody" style="overflow: hidden;"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        <script>
+            function exportToCSV() {
+
+                const rows = document.querySelectorAll("#allOrdersTab tbody tr");
+                const data = Array.from(rows, row => {
+
+                    const columns = row.querySelectorAll("td:not(:last-child)");
+                    return Array.from(columns, column => column.textContent).join(",");
+                }).join("\n");
+
+                const blob = new Blob([data], { type: "text/csv" });
+
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = "orders.csv";
+
+                link.click();
+            }
+
+                let Orders = []
+                let selectedOrdersTab = 'all'
+                function createTableCell(content) {
+                    let cell = document.createElement('td')
+                    cell.innerHTML = content;
+                    return cell;
+                }
+                function dynamicOrderStatus (Id,content) {
+                    let cell = document.createElement('td')
+                    cell.innerHTML = `
+                        <select id="myDropdown_${Id}">
+                            <option value="Pending" ${content === 'Pending' ? 'selected' : ''}>Pending</option>
+                            <option value="Sent" ${content === 'Sent' ? 'selected' : ''}>Sent</option>
+                            <option value="Delivering" ${content === 'Delivering' ? 'selected' : ''}>Delivering</option>
+                            <option value="Delivered" ${content === 'Delivered' ? 'selected' : ''}>Delivered</option>
+                        </select>
+                    `;
+                    return cell;
+                }
+                const loadOrders = async () => {
+                    await axios.get('/api/admin/getAllOrders')
+                        .then(response => response.data)
+                        .then(data => {
+                            Orders = data;
+                            loadAllOrders();
+                            showAlert("Orders loaded successfully","success")
+                        })
+                        .catch(err => showAlert("server refused on order data","danger"))
+                }
+
+                function loadAllOrders() {
+                    document.querySelector('#' + selectedOrdersTab).classList.remove('active')
+                    selectedOrdersTab = 'all'
+                    document.querySelector('#' + selectedOrdersTab).classList.add('active')
+                    loadOrdersTable(Orders);
+                }
+
+                function loadPendingOrders() {
+                    const pendingOrders = Orders.filter(order => order.status === 'Pending');
+                    document.querySelector('#' + selectedOrdersTab).classList.remove('active')
+                    selectedOrdersTab = 'Pending'
+                    document.querySelector('#' + selectedOrdersTab).classList.add('active')
+
+                    loadOrdersTable(pendingOrders);
+                }
+
+                function loadSentOrders() {
+                    const sentOrders = Orders.filter(order => order.status === 'Sent');
+                    document.querySelector('#' + selectedOrdersTab).classList.remove('active')
+                    selectedOrdersTab = 'Sent'
+                    document.querySelector('#' + selectedOrdersTab).classList.add('active')
+
+                    loadOrdersTable(sentOrders);
+                }
+
+                function createTableCell(data, isOrderId = false) {
+                    let cell = document.createElement('td');
+                    if (isOrderId && data.length > 11) {
+                        cell.textContent = data.substring(0, 11) + '..';
+                    } else {
+                        cell.textContent = data;
+                    }
+                    return cell;
+                }
+
+                function loadDeliveringOrders() {
+                    const deliveringOrders = Orders.filter(order => order.status === 'Delivering');
+                    document.querySelector('#' + selectedOrdersTab).classList.remove('active')
+                    selectedOrdersTab = 'Delivering'
+                    document.querySelector('#' + selectedOrdersTab).classList.add('active')
+
+                    loadOrdersTable(deliveringOrders);
+                }
+
+                function loadDeliveredOrders() {
+                    const deliveredOrders = Orders.filter(order => order.status === 'Delivered');
+                    document.querySelector('#' + selectedOrdersTab).classList.remove('active')
+                    selectedOrdersTab = 'Delivered'
+                    document.querySelector('#' + selectedOrdersTab).classList.add('active')
+
+                    loadOrdersTable(deliveredOrders);
+                }
+
+                function loadOrdersTable(orders) {
+                    document.querySelector('#OrdersBody').innerHTML = '';
+                    orders.forEach(async order => {
+
+                        let row = document.createElement('tr');
+                        row.append(createTableCell(order.razorpay_order_id, true));
+                        
+                        row.append(createTableCell(`${order.name}, ${order.email}, ${order.phone}`));   
+                        let names = '';
+                        await Promise.all(order.products.map(async product => {
+                            try {
+                                const response = await axios.get(`/api/products/${product.itemId}`);
+                                names += ` ${response.data.name}`;
+                            } catch (err) {
+                                console.log('error fetching products', err);
+                            }
+                        }));
+                        row.append(createTableCell(names));
+                        row.append(`${order.address}, locality ${order.locality}, landmark ${order.landmark}, city, ${order.city} (Pincode : ${order.pincode})`);
+                        row.append(createTableCell((order.deliveryMethod) || "Prepaid"));
+                        const dateTime = new Date(order.Date);
+                        const formattedDateTime = dateTime.toLocaleString();
+                        row.append(createTableCell(formattedDateTime));
+                        row.append(dynamicOrderStatus(order.razorpay_order_id, order.status));
+                        document.querySelector('#OrdersBody').append(row);
+                        document.querySelector(`#myDropdown_${order.razorpay_order_id}`).addEventListener('change', async event => {
+                            const selectedValue = event.target.value;
+                            await axios.put('/api/update-order-status/' + order.razorpay_order_id, {
+                                status: selectedValue
+                            })
+                            .then(response => {
+                                showAlert('order status updated successfully', 'success');
+                                document.querySelector('#' + selectedOrdersTab).classList.remove('active')
+
+                                order.status = selectedValue;
+                                selectedOrdersTab = selectedValue;
+
+                                document.querySelector('#' + selectedOrdersTab).classList.add('active')
+
+                                switch (selectedValue) {
+                                    case 'Pending':
+                                        loadPendingOrders()
+                                    break;
+                                    case 'Sent':
+                                        loadSentOrders()
+                                    break;
+                                    case 'Delivering':
+                                        loadDeliveringOrders()
+                                    break;
+                                    case 'Delivered':
+                                        loadDeliveredOrders()
+                                    break;
+                                    default:
+                                        loadAllOrders()
+                                    break;
+                                }
+                            })
+                            .catch(error => {
+                                showAlert('error updating order status', 'danger');
+                            });
+                        });
+                    });
+                }
+
+                document.querySelector('#ordersTab').addEventListener('click', loadOrders)
+            </script>
+        </section>
+
+        <section class="main" id="historySection" style="display: none;">
+            <section class="main-orders">
+                <h1>View History</h1>
+
+               <div class="coupon-container" style="padding: 0vh 0vh 0vh 2vh;">
+
+                <div style="overflow: auto;height: 100%;overflow-y: scroll;padding-right: 1vh;">
+
+                    <table id="couponList">
+                        <thead>
+                            <tr>
+                            <th>Email</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="adminHistoryTableBody">
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+            <script>
+                function addLedgerRow(data){
+                    const {email, dateTime, action} = data
+                    const formattedDateTime = new Date(dateTime).toLocaleString();
+                    let row = document.createElement('tr')
+                    row.innerHTML = `
+                    <tr>
+                        <td>${email}</td>
+                        <td>${formattedDateTime}</td>
+                        <td>${action}</td>
+                    </tr>
+                    `
+                    document.querySelector('.adminHistoryTableBody').append(row)
+                }
+                document.querySelector('#historyTab').addEventListener('click', async () => {
+                    await axios.get('/adminActionHistory')
+                    .then(response => response.data)
+                    .then(ledger => {
+                        showAlert("Admin history loaded successfully", "success")
+                        document.querySelector('.adminHistoryTableBody').innerHTML=''
+                        ledger.forEach(data => addLedgerRow(data))
+                    })
+                    .catch(err => showAlert("An error occured while fetching the history","danger"))
+                })
+            </script>
+            </section>
+        </section>
+
+        <section class="main" id="contlo" style="display: none;">
+            <section class="main-orders">
+                <h1>Contlo Sync</h1>
+
+               <div class="coupon-container" style="padding: 0vh 0vh 0vh 2vh;">
+
+                <div style="overflow: auto;height: 100%;overflow-y: scroll;padding: 1vh;padding-right: 2vh;padding-top: 3vh;">
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: space-between; margin-bottom: 1rem; width: 100%;">
+
+                        <input type="text" id="collection_id" placeholder="Collection ID" style="flex: 1; margin-bottom: 1rem; padding: 0.5rem; border: 1px solid #ccc; border-radius: 5px; width: 100%;">
+
+                        <input type="text" id="collection_title" placeholder="Collection Name" style="flex: 1; margin-bottom: 1rem; padding: 0.5rem; border: 1px solid #ccc; border-radius: 5px; width: 100%;">
+
+                        <button onclick="addNewContloCollection()" id="sendButton" style="padding: 0.5rem 1rem; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%;">Create</button>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <script>
+                function addNewContloCollection() {
+                    const id = document.getElementById("collection_id").value
+                    const name = document.getElementById("collection_title").value
+
+                    const url = "https://callback-service.contlo.com/api/collection/create?X-API-KEY=888a1070cd1541e424106639d7b9e4f3";
+
+                    const payload = {
+                        collection_id: id,
+                        title: name
+                    };
+
+                    const config = {
+                        headers: {
+                            accept: "application/json",
+                            "content-type": "application/json"
+                        }
+                    };
+
+                    axios.post(url, payload, config)
+                        .then((response) => {
+                            console.log(response.data);
+                            showAlert("successful","success")
+                        })
+                        .catch((error) => {
+                            console.error(error);
+                            showAlert("failed","danger")
+                        });
+                }
+            </script>
+            </section>
+        </section>
+
+  <%- include('partials/loader') %> 
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
+    </div>
+    <script>
+        let selectedSection = "analyticsSection";
+
+        function selectSection(sectionName) {
+            document.getElementById(selectedSection).style.display = "none";
+            document.getElementById(sectionName).style.display = "block";
+            selectedSection = sectionName;
+        }
+    </script>
+
+</body>
+
+</html>

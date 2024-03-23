@@ -1,0 +1,710 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700");
+
+* {
+    margin: 0;
+    padding: 0;
+    outline: none;
+    border: none;
+    text-decoration: none;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    background: #dfe9f5;
+}
+
+.container {
+    display: flex;
+}
+
+nav {
+    position: relative;
+    top: 0;
+    bottom: 0;
+    min-height: 100vh;
+    max-height: 100%;
+    left: 0;
+    background: #000;
+    width: 280px;
+    
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
+}
+
+nav ul li:nth-child(2){
+    margin-top: 1rem;
+}
+
+nav ul li a.active {
+    background-color: #eee;
+    color: black; 
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.logo {
+    background-color: #fff;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 2vh;
+    text-transform: uppercase;
+    width: 100%; 
+}
+
+::-webkit-scrollbar {
+    width: 12px;
+  }
+  
+  
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey; 
+    border-radius: 1rem;
+  }
+   
+  
+  ::-webkit-scrollbar-thumb {
+    background: #777; 
+    border-radius: 1rem;
+  }
+  
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #999; 
+  }
+
+.logo img {
+    width: 100%;
+    height: 45px;
+}
+
+.main h4 {
+    color: blue;
+}
+
+.logo .admin span {
+    font-weight: bold;
+    padding-left: 15px;
+    font-size: 18px;
+    text-transform: uppercase;
+}
+
+a {
+    position: relative;
+    color: #fff;
+    font-size: 14px;
+    display: block; 
+    padding: 0.6rem;
+}
+
+nav .fas {
+    position: relative;
+    width: 70px;
+    height: 40px;
+    top: 14px;
+    font-size: 20px;
+    text-align: center;
+}
+
+.nav-item {
+    position: relative;
+    top: 12px;
+    margin-left: 10px;
+}
+
+.nav-item button:hover{
+    cursor: pointer;
+    color: #000 !important;
+}
+
+a:hover {
+    background: #eee;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    color: #000;
+}
+
+.logout {
+    position: absolute;
+    bottom: 0;
+}
+
+.main {
+    position: relative;
+    padding: 20px;
+    width: 90vw;
+    height: 100vh;
+}
+
+.main-top h1 {
+    font-size: 1.4rem;
+}
+
+.top {
+    display: flex;
+    width: 100%;
+}
+
+.main-top i {
+    position: absolute;
+    right: 0;
+    margin: 10px 30px;
+    color: rgb(110, 109, 109);
+    cursor: pointer;
+}
+
+.main-skills {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.main-skills-report {
+    display: grid;
+    background-color: transparent !important;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.main-skills .card {
+    margin: 10px;
+    background: #fff;
+    text-align: center;
+    border-radius: 1vh;
+    padding: 10px;
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
+}
+
+.main-skills-report .card {
+    min-height: 200px;
+    overflow: hidden;
+    margin: 1vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    background: #fff;
+    text-align: center;
+    border-radius: 1vh;
+    padding: 10px;
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
+}
+
+.main-skills-report .card h4{
+    font-size: 2.5vh !important;
+    text-transform: capitalize;
+}
+
+
+.card .icon{
+    font-size: 4rem;
+}
+
+.main-skills .card h3 {
+    margin: 10px;
+    text-transform: capitalize;
+}
+
+.main-skills .card p {
+    font-size: 12px;
+}
+
+.main-skills .card button {
+    background: orangered;
+    color: #fff;
+    padding: 7px 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+    cursor: pointer;
+}
+
+.main-skills .card button:hover {
+    background: rgba(223, 70, 15, 0.856);
+}
+
+.main-skills .card i {
+    color: green;
+    font-size: 7vh;
+    padding: 10px;
+}
+
+.main-course {
+    min-height: 60vh;
+    margin-top: 1rem;
+    text-transform: capitalize;
+}
+
+.course-box {
+    height: 50vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 2rem;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    margin-top: 10px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
+}
+
+.course-box canvas{
+    height: auto;
+    width: 100%;
+}
+
+.course-box ul {
+    list-style: none;
+    display: flex;
+}
+
+.course-box ul li {
+    margin: 10px;
+    color: gray;
+    cursor: pointer;
+}
+
+.course-box ul .active {
+    color: #000;
+    border-bottom: 1px solid #000;
+}
+
+.course-box .course {
+    display: flex;
+}
+
+.box {
+    width: 100%;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 10px;
+    background: rgb(235, 233, 233);
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
+}
+
+.box p {
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.box button {
+    background: #000;
+    color: #fff;
+    padding: 7px 10px;
+    border-radius: 10px;
+    margin-top: 3rem;
+    cursor: pointer;
+}
+
+.box button:hover {
+    background: rgba(0, 0, 0, 0.842);
+}
+
+.box i {
+    font-size: 7rem;
+    float: right;
+    margin: -20px 20px 20px 0;
+}
+
+.html {
+    color: rgb(25, 94, 54);
+}
+
+.css {
+    color: rgb(104, 179, 35);
+}
+
+.js {
+    color: rgb(28, 98, 179);
+}
+
+.box {
+    margin: 20px;
+}
+
+.box h3 {
+    margin-bottom: 10px;
+}
+
+.box table {
+    margin-bottom: 20px;
+}
+
+.box table th,
+.box table td {
+    text-align: inherit;
+    padding: 10px;
+}
+
+.course-box {
+    margin-top: 20px;
+}
+
+.course {
+    display: none;
+}
+
+.orders-container ul{
+    display: flex;
+    list-style-type: none;
+}
+
+.orders-container ul li{
+    font-size: 1rem;
+    margin-right: 1rem;
+    padding: 1rem;
+    cursor: pointer;
+}
+
+.orders-container ul li.active{
+    text-decoration: underline;
+}
+
+.user-container,.form-container,.orders-container,.category-container,.wallet,.coupon-container{
+    height: 85vh;
+    margin: 1rem;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
+}
+
+.coupon-container   table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+.coupon-container    th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+.order-table{
+    height: 70vh;
+    overflow-y: scroll;
+    background-color: #ebe9e9;
+    padding: 1rem;
+    border-radius: 1rem;
+}
+
+.order-table tbody{
+    margin-top: 1vh !important;
+}
+
+.order-table tbody td{
+    font-size: 2vh;
+}
+
+.category-container .add-category{
+  padding: 0.5rem;
+  background-color: slateblue;
+  border-radius: 0.2rem;
+  color: #fff;
+  font-weight: bolder;
+}
+
+.coupon-container button{
+    padding: 0.5rem;
+    background-color: slateblue;
+    border-radius: 0.2rem;
+    color: #fff;
+    font-weight: 400;
+  }
+
+.coupon-container button:hover{
+    color: slateblue;
+    background-color: #fff;
+    border: 1px solid slateblue;
+}
+
+.category-container .add-category:hover{
+    color: slateblue;
+    background-color: #fff;
+    border: 1px solid slateblue;
+}
+
+.category-input {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.category-input input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.category-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.user-table{
+    width: 100%;
+    border-radius: 1rem;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.category-table th, .category-table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+.wallet-table th, .wallet-table td {
+    border: 1px solid #ddd;
+    padding: 0.6rem;
+    text-align: left;
+}
+
+.wallet-table {
+    width: 100%;
+    border-collapse: collapse;
+    max-height: 30vh;
+}
+
+.wallet .btn,.btn-show{
+    background-color: #777;
+    color: #fff;
+    padding: 0.5rem;
+    border-radius: .3rem;
+    font-size: 0.7rem;
+    cursor: pointer;
+    margin: 0.7rem;
+    margin-left: 0;
+}
+
+.wallet-bottom{
+    height: 45vh;
+    scrollbar-width: thin;
+    overflow-y: auto;
+    border-radius: 8px;
+    border: 1px solid #999;
+    margin-top: 0.7rem;
+    padding: 1rem;
+}
+
+.wallet-top .card{
+    width: 20vw;
+    border: 1px solid #999;
+    padding: 1rem;
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.wallet-top .card i{
+    font-size: 2rem;
+}
+
+.wallet-top .card h4{
+    font-size: 2rem;
+}
+
+.btn-show{
+    margin-left: -4rem;
+    background-color: #4CAF50;
+}
+
+.btn-show:hover{
+    background-color: #fff;
+    border: 1px solid #4CAF50;
+    color: #4CAF50;
+}
+
+.user-table th, .user-table td{
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+.user-table th{
+    background-color: #f2f2f2;
+}   
+
+.category-table th {
+  background-color: #f2f2f2;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 5px;
+}
+
+.user-container .block-button{
+    padding: 0.5rem;
+  margin-right: 1rem;
+  cursor: pointer;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 3px;
+}
+
+.edit-button, .delete-button {
+  padding: 0.5rem;
+  margin-right: 1rem;
+  cursor: pointer;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 3px;
+}
+
+.chart-container {
+    margin-top: 2rem;
+    position: relative;
+    max-width: 308px; /* Ensure the chart container does not exceed specified width */
+    max-height: 200px; /* Ensure the chart container does not exceed specified height */
+    width: 100%; /* Ensure the chart container fills the width of the parent container */
+    height: 100%; /* Ensure the chart container fills the height of the parent container */
+}
+
+.chart-container canvas {
+    position: relative;
+    width: 100%; /* Ensure the canvas fills the width of the chart container */
+    height: 100%; /* Ensure the canvas fills the height of the chart container */
+}
+
+
+.select-button {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: #f0f0f0;
+    border: 2px solid #888;
+    border: none;
+    padding: 4px 8px;
+    font-size: 16px;
+    cursor: pointer;
+    outline: none;
+    border-radius: 4px;
+    color: #333;
+    transition: background-color 0.3s ease;
+}
+
+.select-button:hover {
+    background-color: #e0e0e0;
+}
+
+.select-button:focus {
+    background-color: #d0d0d0;
+}
+
+
+.schedule-product {
+    padding: 0.5rem;
+    margin-right: 1rem;
+    cursor: pointer;
+    background-color: grey;
+    color: white;
+    border: none;
+    border-radius: 3px;
+  }
+
+.delete-button {
+  background-color: #f44336;
+}
+
+.add-category,
+    .category-table button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 8px 12px; 
+        margin-right: 5px; 
+        cursor: pointer;
+    }
+
+    .category-table button:hover {
+        background-color: #45a049; 
+    }
+
+      .product-grid {
+        margin: 1rem;
+        padding: 1rem;
+        border-radius: 1rem;
+        background-color: #fff;
+        box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+        font-size: 1rem;
+        max-height: 85vh;
+        overflow-y: auto;
+    }
+
+    .product-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        text-align: left;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .product-card button{
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 8px 12px; 
+        margin-right: 5px; 
+        cursor: pointer;
+    }
+
+    .main-orders .schedule-product{
+        background-color: grey !important;
+    }
+
+    .product-card button:nth-child(2){
+        background-color: red;
+    }
+
+    .product-image {
+        width: 100%;
+        height: auto ;
+        margin: auto;
+        border-radius: 8px;
+    }
+
+    .product-name {
+        margin-top: 10px;
+        font-weight: bold;
+    }
+
+    .product-actions {
+        margin-top: 10px;
+    }
+
+    .addon-images{
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .addon-images div{
+        padding: 1vh;
+        display: flex;
+        flex-direction: column;
+        font-family: "Poppins", sans-serif;
+    }
+
+    .addon-images label{
+        font-size: 2vh;
+        font-weight: 500;
+    }
+
+    .addon-images input{
+        font-size: 1.5vh;
+    }
