@@ -4,14 +4,9 @@ const router = express.Router();
 
 const controllers = require("../controllers/userControllers");
 
-// Define a middleware to check if the user is authenticated
-const isAuthenticated = (req, res, next) => {
-  if (req.session.isLoggedIn) {
-    next(); // User is authenticated, proceed to the next middleware or route
-  } else {
-    res.status(401).json({ message: "Unauthorized" });
-  }
-};
+const authenticator = require("../middlewares/adminConfig");
+const isAdminAuthenticated = authenticator.adminAuthenticater;
+const isAuthenticated = authenticator.userAuthenticator;
 
 router.post("/auth/login", controllers.authLogin);
 

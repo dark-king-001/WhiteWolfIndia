@@ -3,6 +3,10 @@ const router = express.Router();
 
 const controllers = require("../controllers/productControllers");
 
+const authenticator = require("../middlewares/adminConfig");
+const isAdminAuthenticated = authenticator.adminAuthenticater;
+const isAuthenticated = authenticator.userAuthenticator;
+
 router.get("/api/products", controllers.getAllProducts);
 
 router.get("/api/products/:itemId", controllers.getProductUsingId);

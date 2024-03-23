@@ -2,6 +2,10 @@ const express = require("express");
 const router = express.Router();
 // Schema and Model definitions here...
 
+const authenticator = require("../middlewares/adminConfig");
+const isAdminAuthenticated = authenticator.adminAuthenticater;
+const isAuthenticated = authenticator.userAuthenticator;
+
 const controllers = require("../controllers/orderControllers");
 
 // Routes for Sales Schema:

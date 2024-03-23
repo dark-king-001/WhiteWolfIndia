@@ -1,6 +1,10 @@
 const express = require("express");
 const router = express.Router();
 
+const authenticator = require("../middlewares/adminConfig");
+const isAdminAuthenticated = authenticator.adminAuthenticater;
+const isAuthenticated = authenticator.userAuthenticator;
+
 const collectionController = require("../controllers/collectionControllers");
 
 // done
