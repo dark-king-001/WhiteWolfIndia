@@ -67,6 +67,8 @@
         alert.style.display = "none";
       }
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   </head>
   <body>
@@ -92,7 +94,7 @@
           <li>
             <a href="#" onclick="selectSection('orders')" id="ordersTab">
               <i class="fas fa-user"></i>
-              <span class="nav-item">ordera</span>
+              <span class="nav-item">orders</span>
             </a>
           </li>
           <li>
@@ -133,7 +135,7 @@
       </nav>
     </header>
     <main>
-      <div id="users">
+      <div id="users" style="display: none">
         <div>
           <h1>
             User Analytics
@@ -497,7 +499,7 @@
             .addEventListener("click", loadOrders);
         </script>
       </div>
-      <div id="analytics" style="display: none">
+      <div id="analytics">
         <section class="main-course">
           <h1>Orders Analytics</h1>
           <div class="course-box">
@@ -2591,7 +2593,7 @@
       </div>
     </main>
     <script>
-      let selectedSection = "collections";
+      let selectedSection = "analytics";
 
       function selectSection(sectionName) {
         document.getElementById(selectedSection).style.display = "none";
