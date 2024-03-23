@@ -1,13 +1,16 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import ProductCard from "../../components/ProductCard/ProductCard";
 
-const Home = () => {
+const Home = ({ products }) => {
   return (
-    <div className="homePage">
-      this is the homepage
-      <br></br>
-      <NavLink to="/about">About</NavLink>
-    </div>
+    <>
+      <div className="homePage">
+        {products.map((product) => (
+          <ProductCard key={product.itemId} product={product} />
+        ))}
+      </div>
+    </>
   );
 };
 
