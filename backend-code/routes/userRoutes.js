@@ -2,7 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 
-const controllers = require("../controllers/user_controllers");
+const controllers = require("../controllers/userControllers");
 
 // Define a middleware to check if the user is authenticated
 const isAuthenticated = (req, res, next) => {
@@ -39,7 +39,7 @@ router.post(
 
 router.get("/products/:itemId/reviews", isAuthenticated, controllers.getReview);
 
-const Orders = require("../schemas/order_schema");
+const Orders = require("../models/orderModel");
 
 // get order track
 router.get(
@@ -119,7 +119,7 @@ router.get(
   }
 );
 
-const Subscriber = require("../schemas/subscriber_schema");
+const Subscriber = require("../models/subscriberModel");
 
 router.post("/subscribe", async (req, res) => {
   const { email, item } = req.body;

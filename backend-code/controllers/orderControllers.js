@@ -1,9 +1,7 @@
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const User = require("../schemas/user_schema");
-const Product = require("../schemas/product_schema");
-const Orders = require("../schemas/order_schema");
-const Coupons = require("../schemas/coupons_schema");
+const User = require("../models/userModel");
+const Product = require("../models/productModel");
+const Orders = require("../models/orderModel");
+const Coupons = require("../models/coupenModel");
 
 // email
 exports.getOrderByEmail = async (req, res) => {
@@ -16,7 +14,7 @@ exports.getOrderByEmail = async (req, res) => {
 };
 
 const Razorpay = require("razorpay");
-const user = require("../schemas/user_schema");
+const user = require("../models/userModel");
 const { RAZORPAY_ID_KEY, RAZORPAY_SECRET_KEY } = process.env;
 
 const razorpayInstance = new Razorpay({
@@ -95,7 +93,7 @@ exports.paymentGateway = async (req, res) => {
     console.log(error.message);
   }
 };
-const payment = require("../schemas/payment_signatures");
+const payment = require("../models/paymentSignatures");
 
 const nodemailer = require("nodemailer");
 
@@ -159,7 +157,7 @@ const orderMail = (req, res, orderDetails) => {
     }
   });
 };
-const UserSessionTrack = require("../schemas/user_session_manager");
+const UserSessionTrack = require("../models/userSessionManagerModel");
 
 exports.saveOrder = async (req, res) => {
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =

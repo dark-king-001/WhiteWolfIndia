@@ -2,13 +2,13 @@ const express = require("express");
 const session = require("express-session");
 // const bcrypt = require('bcrypt');
 // const jwt = require('jsonwebtoken');
-const User = require("../schemas/user_schema");
-const Product = require("../schemas/product_schema");
+const User = require("../models/userModel");
+const Product = require("../models/productModel");
 
 const nodemailer = require("nodemailer");
 const randomize = require("randomatic");
 
-const loginMail = (req, res) => {
+exports.loginMail = (req, res) => {
   // Send OTP to the user's email
   const transporter = nodemailer.createTransport({
     host: process.env.MAIL_HOST,
@@ -51,8 +51,7 @@ const loginMail = (req, res) => {
     }
   });
 };
-
-const adminMail = (req, res) => {
+exports.adminMail = (req, res) => {
   // Send OTP to the user's email
   const transporter = nodemailer.createTransport({
     host: process.env.MAIL_HOST,
@@ -97,7 +96,7 @@ const adminMail = (req, res) => {
   });
 };
 
-const authLogin = async (req, res) => {
+exports.authLogin = async (req, res) => {
   try {
     const { email, otp } = req.body;
 
@@ -200,7 +199,7 @@ const authLogin = async (req, res) => {
   }
 };
 
-const sendOTP = (req, res) => {
+exports.sendOTP = (req, res) => {
   const userEmail = req.body.email;
 
   // Generate OTP
@@ -251,7 +250,7 @@ const sendOTP = (req, res) => {
     }
   });
 };
-const authLogout = (req, res) => {
+exports.authLogout = (req, res) => {
   req.session.destroy((err) => {
     if (err) {
       console.error("Error destroying session:", err);
@@ -260,7 +259,7 @@ const authLogout = (req, res) => {
     }
   });
 };
-const saveUserProfile = async (req, res) => {
+exports.saveUserProfile = async (req, res) => {
   try {
     const { name, phone, pincode, locality, landmark, city, address, cart } =
       req.session.userProfile;
@@ -291,7 +290,7 @@ const saveUserProfile = async (req, res) => {
     console.error("Error updating user data:", error);
   }
 };
-const updateProfile = async (req, res) => {
+exports.updateProfile = async (req, res) => {
   try {
     const { name, phone, pincode, locality, landmark, city, address } =
       req.body.userProfile;
@@ -308,15 +307,15 @@ const updateProfile = async (req, res) => {
     console.error("Error updating user data:", error);
   }
 };
-const getProfile = async (req, res) => {
+exports.getProfile = async (req, res) => {
   res.status(200).json({
     message: "User profile loaded successfully",
     userProfile: req.session.userProfile,
   });
 };
-const UserSessionTrack = require("../schemas/user_session_manager");
+const UserSessionTrack = require("../models/userSessionManagerModel");
 
-const addCartItem = async (req, res) => {
+exports.addCartItem = async (req, res) => {
   const { itemId } = req.body;
   const userProfile = req.session.userProfile;
 
@@ -390,7 +389,7 @@ const addCartItem = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-const removeCartItem = (req, res) => {
+exports.removeCartItem = (req, res) => {
   const { itemId } = req.body;
   const userProfile = req.session.userProfile;
 
@@ -422,7 +421,7 @@ const removeCartItem = (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-const increaseCartItemQuantity = (req, res) => {
+exports.increaseCartItemQuantity = (req, res) => {
   const { itemId } = req.body;
   const userProfile = req.session.userProfile;
 
@@ -471,7 +470,7 @@ const increaseCartItemQuantity = (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-const decreaseCartItemQuantity = (req, res) => {
+exports.decreaseCartItemQuantity = (req, res) => {
   const { itemId } = req.body;
   const userProfile = req.session.userProfile;
 
@@ -521,7 +520,7 @@ const decreaseCartItemQuantity = (req, res) => {
   }
 };
 // Route to push a new review or update an existing one
-const addOrUpdateReview = async (req, res) => {
+exports.addOrUpdateReview = async (req, res) => {
   try {
     const { orderId, rating, title, detail } = req.body;
     const { email } = req.session;
@@ -574,7 +573,7 @@ const addOrUpdateReview = async (req, res) => {
   }
 };
 // Route to get a review based on email and orderId
-const getReview = async (req, res) => {
+exports.getReview = async (req, res) => {
   try {
     const { orderId } = req.body;
     const { email } = req.session;
@@ -607,18 +606,4 @@ const getReview = async (req, res) => {
     console.error("Error getting review:", error);
     res.status(500).json({ message: "Internal server error" });
   }
-};
-
-module.exports = {
-  sendOTP,
-  authLogin,
-  authLogout,
-  updateProfile,
-  getProfile,
-  addCartItem,
-  removeCartItem,
-  increaseCartItemQuantity,
-  decreaseCartItemQuantity,
-  addOrUpdateReview,
-  getReview,
 };
