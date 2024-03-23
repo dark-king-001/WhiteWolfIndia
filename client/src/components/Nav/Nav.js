@@ -7,7 +7,7 @@ const Nav = () => {
       <div>tagline</div>
       <nav className="navBar">
         <div className="left">
-          <img src="/logo.png" placeholder="Logo" alt="Logo" />
+          <img src="#" placeholder="Logo" alt="Logo" />
           <NavLink to="/">New Arrivals</NavLink>
           <NavLink to="/">Best Sellers</NavLink>
           <NavLink to="/">Beard Care</NavLink>

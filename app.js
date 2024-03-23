@@ -48,6 +48,37 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.get("/", (req, res) => {
+  try {
+    fs.readFile(
+      path.join(__dirname, "./client/build/index.html"),
+      "utf-8",
+      (err, data) => {
+        if (err) {
+          console.error("Error reading file:", err);
+          res.status(500).send("Internal Server Error");
+          return;
+        }
+        const htmlContent = data
+          .replace("{title}", "Home")
+          .replace(
+            "{metadescription}",
+            "content='White Wolf India - Your destination for high-quality content and services.')"
+          )
+          .replace(
+            "{metakeywords}",
+            "content='White Wolf, India, services, content, high-quality'"
+          )
+          .replace("{metaauthor}", "content='white wolf India'");
+        res.send(htmlContent);
+      }
+    );
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 // Serve the React app;
 app.use(express.static(path.join(__dirname, "./client/build")));
 
@@ -60,11 +91,39 @@ app.get("/web-admin", (req, res) => {
 
 app.get("*", (req, res) => {
   try {
+    /*
+      about-us
+      terms-and-conditions
+      contact us
+      disclaimer
+      refund-policy
+      shipping policy
+
+      order confirm page
+      order failed
+      order tracking
+      thank you
+
+      privacy-policy
+
+      homepage
+      product description
+      product collection
+      product search
+      coming soon
+
+      sitemap.xml
+
+      unauthorized
+      auth-page
+      user profile
+    */
+
     const allowedUrls = {
-      "/": "Home",
       "/about": "About",
     };
     const title = allowedUrls[req.originalUrl];
+
     if (title) {
       fs.readFile(
         path.join(__dirname, "./client/build/index.html"),
@@ -85,12 +144,12 @@ app.get("*", (req, res) => {
               "{metakeywords}",
               "content='White Wolf, India, services, content, high-quality'"
             )
-            .replace("{metaauthor}", "content='Your Name'");
+            .replace("{metaauthor}", "content='white wolf India'");
           res.send(htmlContent);
         }
       );
     } else {
-      res.status(404).send("Page Not Found");
+      res.status(404).redirect("/");
     }
   } catch (error) {
     console.error("Error:", error);
