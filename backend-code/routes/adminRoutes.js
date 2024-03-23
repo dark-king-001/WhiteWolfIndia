@@ -1,24 +1,14 @@
 const express = require("express");
 const router = express.Router();
 // Schema and Model definitions here...
-const adminHistory = require("../schemas/admin_his_schema");
+const adminHistory = require("../models/adminHistorySchema");
 
-const controllers = require("../controllers/admin_controllers");
+const controllers = require("../controllers/adminControllers");
 
 const authenticator = require("../adminConfig");
 
 // Define a middleware to check if the user is authenticated
-const isAdminAuthenticated = (req, res, next) => {
-  if (req.session.isLoggedIn) {
-    if (authenticator.adminAuthenticater(req.session.email)) {
-      next(); // User is authenticated, proceed to the next middleware or route
-    } else {
-      res.status(401).json({ message: "Administrator credentials required" });
-    }
-  } else {
-    res.status(401).json({ message: "Unauthorized" });
-  }
-};
+
 const UserSessionTrack = require("../schemas/user_session_manager");
 
 router.get(
