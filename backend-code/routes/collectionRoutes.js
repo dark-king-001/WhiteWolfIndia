@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const collectionController = require("../controllers/collectionController");
+const collectionController = require("../controllers/collectionControllers");
 
 // done
 router.get("/collections", collectionController.getAllCollections);

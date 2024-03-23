@@ -89,12 +89,6 @@ router.get(
   controllers.getAllUsers
 );
 
-router.get(
-  "/api/admin/getAllOrders",
-  isAdminAuthenticated,
-  controllers.getAllOrders
-);
-
 router.get("/adminActionHistory", isAdminAuthenticated, async (req, res) => {
   try {
     const completeLedger = await adminHistory.find();

@@ -6,7 +6,7 @@ const Orders = require("../schemas/order_schema");
 const Coupons = require("../schemas/coupons_schema");
 
 // email
-const getOrderByEmail = async (req, res) => {
+exports.getOrderByEmail = async (req, res) => {
   try {
     const ordersByEmail = await Orders.find({ email: req.session.email });
     res.json(ordersByEmail);
@@ -24,7 +24,7 @@ const razorpayInstance = new Razorpay({
   key_secret: RAZORPAY_SECRET_KEY,
 });
 
-const paymentGateway = async (req, res) => {
+exports.paymentGateway = async (req, res) => {
   try {
     const { name, phone, pincode, address, city, locality, landmark } =
       req.body;
@@ -161,7 +161,7 @@ const orderMail = (req, res, orderDetails) => {
 };
 const UserSessionTrack = require("../schemas/user_session_manager");
 
-const saveOrder = async (req, res) => {
+exports.saveOrder = async (req, res) => {
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
     req.body.data;
   if (razorpay_order_id && razorpay_payment_id && razorpay_signature) {
@@ -396,8 +396,11 @@ const saveOrder = async (req, res) => {
 //     .catch(err => res.status(200).send({err}))
 // }
 
-module.exports = {
-  getOrderByEmail,
-  paymentGateway,
-  saveOrder,
+exports.getAllOrders = async (req, res) => {
+  try {
+    const allOrders = await Orders.find();
+    res.json(allOrders);
+  } catch (error) {
+    res.status(500).json({ error: "No User in server" });
+  }
 };
