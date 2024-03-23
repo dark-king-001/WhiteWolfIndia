@@ -6,7 +6,7 @@ const collectionSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  containedProducts: [],
+  containedProducts: [{ type: String }],
   description: String,
   createdAt: {
     type: Date,
