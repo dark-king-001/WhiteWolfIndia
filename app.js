@@ -52,7 +52,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "./client/build")));
 
 const backend = require("./backend-code/backendPorter");
-app.use(backend);
+app.use(...backend);
 
 app.get("/web-admin", (req, res) => {
   res.sendFile(__dirname + "/web-admin/index.html");
