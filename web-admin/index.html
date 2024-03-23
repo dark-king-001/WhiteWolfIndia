@@ -67,6 +67,7 @@
         alert.style.display = "none";
       }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   </head>
   <body>
     <header>
@@ -77,26 +78,176 @@
             <span class="nav-item admin">Admin Dashboard</span>
           </li>
           <li>
-            <a href="#" onclick="selectSection('collections')" id="usersTab">
+            <a
+              href="#"
+              onclick="selectSection('collections')"
+              id="collectionsTab"
+            >
               <i class="fas fa-user"></i>
               <span class="nav-item">collections</span>
             </a>
           </li>
           <li>
-            <a href="#" onclick="selectSection('products')" id="usersTab">
+            <a href="#" onclick="selectSection('addProducts')" id="productsTab">
               <i class="fas fa-user"></i>
-              <span class="nav-item">products</span>
+              <span class="nav-item">add Products</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" onclick="selectSection('inventory')" id="inventoryTab">
+              <i class="fas fa-user"></i>
+              <span class="nav-item">Inventory</span>
             </a>
           </li>
         </ul>
       </nav>
     </header>
     <main>
-      <div id="collections">
-        <div>this is collections Tab</div>
+      <div id="collections" style="display: none">
+        <div>
+          <button id="collectionsCreate">Create New</button>
+          <form id="collectionsForm" style="display: none">
+            <input type="text" id="collectionName" placeholder="Name" />
+            <input
+              type="text"
+              id="collectionDescription"
+              placeholder="Description"
+            />
+            <button id="collectionsEnter">Enter</button>
+            <button id="collectionsCancel">Cancel</button>
+          </form>
+          <table>
+            <thead>
+              <th>Name</th>
+              <th>Description</th>
+            </thead>
+            <tbody id="collectionsTableBody"></tbody>
+          </table>
+        </div>
+        <script>
+          let collectionsEditMode = false;
+          let collectionsEditId = "";
+
+          document
+            .getElementById("collectionsEnter")
+            .addEventListener("click", () => {
+              const name = document.getElementById("collectionName").value;
+              const description = document.getElementById(
+                "collectionDescription"
+              ).value;
+
+              if (collectionsEditMode) {
+                axios
+                  .put("/collections/" + collectionsEditId, {
+                    name,
+                    description,
+                  })
+                  .then((response) => {
+                    collectionsEditId = "";
+                    collectionsEditMode = false;
+                    showAlert("collection updated successfully", "success");
+
+                    loadCollections();
+                  })
+                  .catch((err) => console.log(err));
+              } else {
+                axios
+                  .post("/collections", { name, description })
+                  .then((response) => {
+                    showAlert("collection created successfully", "success");
+                    loadCollections();
+                  })
+                  .catch((err) => console.log(err));
+              }
+            });
+
+          document
+            .getElementById("collectionsCreate")
+            .addEventListener("click", (event) => {
+              event.preventDefault();
+
+              document.getElementById("collectionsCreate").style.display =
+                "none";
+              document.getElementById("collectionsForm").style.display =
+                "block";
+            });
+          document
+            .getElementById("collectionsCancel")
+            .addEventListener("click", (event) => {
+              collectionsEditMode = false;
+              collectionsEditId = "";
+
+              event.preventDefault();
+              document.getElementById("collectionsCreate").style.display =
+                "block";
+              document.getElementById("collectionsForm").style.display = "none";
+            });
+
+          async function loadCollections() {
+            await axios
+              .get("/collections")
+              .then((response) => {
+                const data = response.data;
+
+                document.getElementById("collectionsTableBody").innerHTML = "";
+                data.forEach((element) => {
+                  let row = document.createElement("tr");
+
+                  let name = document.createElement("td");
+                  name.textContent = element.name;
+                  row.append(name);
+
+                  let description = document.createElement("td");
+                  description.textContent = element.description;
+                  row.append(description);
+
+                  let edit = document.createElement("button");
+                  edit.textContent = "edit";
+                  edit.addEventListener("click", () => {
+                    collectionsEditId = element._id;
+                    collectionsEditMode = true;
+
+                    document.getElementById("collectionsCreate").style.display =
+                      "none";
+                    document.getElementById("collectionsForm").style.display =
+                      "block";
+                    document.getElementById("collectionName").value =
+                      element.name;
+                    document.getElementById("collectionDescription").value =
+                      element.description;
+                  });
+                  row.append(edit);
+
+                  let deleteButton = document.createElement("button");
+                  deleteButton.textContent = "delete";
+                  deleteButton.addEventListener("click", () => {
+                    axios
+                      .delete("/collections/" + element._id)
+                      .then(async (response) => {
+                        showAlert("collection deleted successfully", "success");
+                        loadCollections();
+                      })
+                      .catch((err) => console.log(err));
+                  });
+                  row.append(deleteButton);
+
+                  document.getElementById("collectionsTableBody").append(row);
+                });
+              })
+              .catch((err) => console.log(err));
+          }
+          document
+            .getElementById("collectionsTab")
+            .addEventListener("click", loadCollections());
+        </script>
       </div>
-      <div id="products" style="display: none">
-        <div>this is products tab</div>
+      <div id="addProducts" style="display: none">
+        <div></div>
+        <script></script>
+      </div>
+      <div id="inventory" style="display: none">
+        <div></div>
+        <script></script>
       </div>
     </main>
     <script>
