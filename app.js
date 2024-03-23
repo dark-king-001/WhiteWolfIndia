@@ -51,21 +51,8 @@ app.use(express.urlencoded({ extended: true }));
 // Serve the React app;
 app.use(express.static(path.join(__dirname, "./client/build")));
 
-// page routes
-// const pages = require("./routes/page_routes");
-// app.use(pages);
-
-// const user = require("./routes/user_routes");
-// app.use(user);
-
-// const products = require("./routes/product_routes");
-// app.use(products);
-
-// const orders = require("./routes/order_routes");
-// app.use(orders);
-
-// const admin = require("./routes/admin_routes");
-// app.use(admin);
+const backend = require("./backend-code/backendPorter");
+app.use(backend);
 
 app.get("/web-admin", (req, res) => {
   res.sendFile(__dirname + "/web-admin/index.html");
